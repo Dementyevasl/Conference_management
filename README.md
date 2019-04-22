@@ -1,6 +1,5 @@
 # Conference_management
-
-One Paragraph of project description goes here
+Conference recommender system allows for personalized recommendations of scientific conferences based on user's research interests. It
 
 ## Getting Started
 
