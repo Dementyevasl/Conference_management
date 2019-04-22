@@ -1,5 +1,5 @@
 # Conference_management
-Conference recommender system allows for personalized recommendations of scientific conferences based on user's research interests. It
+Conference recommender system allows for personalized recommendations of scientific conferences based on user's research interests. 
 
 ## Getting Started
 
