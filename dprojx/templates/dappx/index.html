@@ -1,0 +1,41 @@
+{% extends "dappx/base.html" %}
+
+{% block content %}
+  <h1>Conference Management System</h1>
+  <p>Welcome to the conference Management System, {{user.username}} !</p>
+  <p> EasyChair is a conference management system that is flexible, easy to use, and has many features to make it suitable for various conference models. It is currently probably the most commonly used conference management system.
+Our users include top conferences in several areas, for example, in World Wide Web and in Bioinformatics. Our users range from small workshops with around 10 submissions to big conferences having thousands of submissions.
+The first version of EasyChair was implemented in 2002. It was used by 12 conferences in 2002-2004 and by 66 conferences in 2005. We believe that since 2006 we have become number one conference management system in the number of conferences, users and submissions.</p>
+  <h2>Сontent</h2>
+  <p>The conference management system has the following record counts:</p>
+  <ul>
+  	<li><strong>Conferences:</strong> {{ num_articles }}</li>
+    <li><strong>Articles:</strong> {{ num_articles }}</li>
+    <li><strong>Authors:</strong> {{ num_authors }}</li>
+  </ul>
+
+  <h2>How to:</h2>
+  <ul>
+  	<li><strong><a href="{% url 'dappx:register' %}">Create an account</a></li>
+    <li><strong>Create a conference:</strong> (link_to_the_create_conference_page)</li>
+    <li><strong>Publish a volume:</strong> (link_to_the_publish_a_volume_page)</li>
+  </ul>
+
+  <h2>Some of our conferences:</h2>
+  <ul>
+  	<li><strong>Conference 1</li>
+    <li><strong>Conference 2</li>
+    <li><strong>Conference 3</li>
+  </ul>
+
+  <h2> Support </h2>
+  <p> You can support the project by entering our team. We are looking for extra hands in three major objectives:</p>
+  <ol>
+  	<li> Скрапинг данных </li>
+  	<li> Ресеч задачи </li>
+  	<li> Построение веб-сервиса </li>
+  </ol>
+  <p> Any help is kindly appreciated!</p>
+
+
+{% endblock %}

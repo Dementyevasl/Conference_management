@@ -1,0 +1,10 @@
+{% extends "dappx/base.html" %}
+
+{% block content %}
+  <h1>Title: {{ article.title }}</h1>
+
+  <p><strong>Author:</strong> <a href="{{ article.author.get_absolute_url }}">{{ article.author }}</a></p> 
+  <p><strong>Abstract:</strong> {{ article.abstract }}</p>
+  <p><strong>Subject:</strong> {% for subject in article.subject.all %} {{ subject }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>  
+
+{% endblock %}
