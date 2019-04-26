@@ -29,7 +29,7 @@ Say what the step will be
 3. Enter the directory: cd django 
    Inside the directory create a virtual environment with python3: virtualenv denvx -p python3
 4. Clone the project from github: git clone https://github.com/Dementyevasl/Conference_management.git
-5. Activate the virtual environment: source /denvx/bin/activate
+5. Activate the virtual environment: source denvx/bin/activate
 6. Install the django package in the virtual environment: pip install django
 7. Install the pillow package in the virtual environment: pip install Pillow
 8. Install the django debugger in the virtual environment: pip install django-debugtools
