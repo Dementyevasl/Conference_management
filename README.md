@@ -34,8 +34,9 @@ Say what the step will be
 7. Install the pillow package in the virtual environment: pip install Pillow
 8. Install the django debugger in the virtual environment: pip install django-debugtools
 9. Not necessary, but very usefull: create a super user so you can controll the admin panell: python manage.py createsuperuser
-10. Run the server: python manage.py runserver
-11. Open the http://127.0.0.1:8000
+10. Ensure the proper migration of DB schemas: python manage.py migrate
+11. Run the server: python manage.py runserver
+12. Open the http://127.0.0.1:8000
 
 If you did everything correct, you can now use and test the project
 
