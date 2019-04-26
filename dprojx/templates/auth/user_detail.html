@@ -1,0 +1,18 @@
+{% extends "dappx/base.html" %}
+
+{% block content %}
+
+      {% if user.is_authenticated %}
+        <div class="col-md-12"><strong>Username:</strong> {{ user.username }}</div>
+        <div class="col-md-12"><strong>Email:</strong> {{ user.email }}</div>
+        <div class="col-md-12"><strong>Last login:</strong> {{ user.last_login }}</div>
+        <div class="col-md-12"><strong>Portfolio site:</strong> {{ user.userprofileinfo.portfolio_site }}</div>
+        <div class="col-md-12"><strong>User ID:</strong> {{ user.userprofileinfo.user_id }}</div>
+
+        <div class="col-md-12">
+          <img style="max-width: 300px" src="../media/{{ user.userprofileinfo.profile_pic }}" />
+        </div>
+      {% endif %}
+
+
+{% endblock %}

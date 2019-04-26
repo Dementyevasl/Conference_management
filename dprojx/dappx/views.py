@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from dappx.models import Subject, Article, Author, UserProfileInfo
+from dappx.models import Subject, Article, Author, UserProfileInfo, User
 from django.views import generic
 
 
@@ -96,7 +96,7 @@ class AuthorDetailView(generic.DetailView):
     model = Author
 
 class UserDetailView(generic.DetailView):
-    model = UserProfileInfo
+    model = User
 
 def about(request):
     return render(request, 'dappx/about.html')

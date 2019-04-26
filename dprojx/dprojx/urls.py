@@ -3,6 +3,9 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url, include
 from dappx import views
+from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -14,6 +17,10 @@ urlpatterns = [
     path('article/<int:pk>', views.ArticleDetailView.as_view(), name='article-detail'),
     path('authors/', views.AuthorListView.as_view(), name='authors'),
     path('author/<int:pk>', views.AuthorDetailView.as_view(), name='author-detail'),
-    path('profile/', views.UserDetailView.as_view(), name='profile'),
+    path('profile/<int:pk>', views.UserDetailView.as_view(), name='profile'),
     path('about/', views.about, name='about'),
-]
+] 
+
+urlpatterns += staticfiles_urlpatterns()
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
