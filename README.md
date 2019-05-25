@@ -16,7 +16,12 @@ All other dependencies will be installed in the virtual environment.
 The packages that need to be installed in the environment: Django, Pillow, django-debugtools
 ```
 
-### Installing
+### Fast local run
+1. Install cmake and docker
+2. $ make run
+3. Open http://localhost:8080 in yor browser
+
+### Installing long way
 
 A step by step series of examples that tell you how to get a development env running
 
