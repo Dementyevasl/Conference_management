@@ -1,0 +1,21 @@
+{% extends "dappx/base.html" %}
+
+{% block content %}
+
+<div class="panel panel-default">
+  <!-- Default panel contents -->
+  <div class="panel-heading">Conferences:</div>
+{#  <div class="panel-body">#}
+{#    <p>...</p>#}
+{#  </div>#}
+
+  <!-- List group -->
+  <ul class="list-group">
+  {% for conference in conferences %}
+    <li class="list-group-item"><a href="{% url 'conference:detail' conference.id %}">{{ conference.confTitle }}</a></li>
+  {% endfor %}
+  </ul>
+</div>
+
+
+{% endblock %}
