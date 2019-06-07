@@ -6,7 +6,7 @@ app_name = 'conference'
 
 urlpatterns = [
     # ex: /conferences/
-    path('', views.index, name='index'),
+    path('', views.listing, name='index'),
     # ex: /conferences/5/
     path('<int:conference_id>/', views.detail, name='detail'),
 ]
