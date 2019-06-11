@@ -108,6 +108,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+        # 'social_core.backends.linkedin.LinkedinOAuth2',
+        # 'social_core.backends.instagram.InstagramOAuth2',
+        # 'social_core.backends.facebook.FacebookOAuth2',
+        'django.contrib.auth.backends.ModelBackend',
+    ]
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
@@ -131,3 +138,6 @@ STATICFILES_DIRS = [STATIC_DIR, ]
 MEDIA_ROOT = MEDIA_DIR
 MEDIA_URL = '/media/'
 LOGIN_URL = '/dappx/user_login/'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # debug only

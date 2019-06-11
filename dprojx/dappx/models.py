@@ -2,21 +2,38 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.db.models.signals import post_save
 # Create your models here.
 
+# class CustomUser(AbstractUser):
+#     # add additional fields in here
+
+#     def __str__(self):
+#         return self.email
 
 class UserProfileInfo(models.Model):
   
-	user = models.OneToOneField(User, on_delete=models.CASCADE)
-	portfolio_site = models.URLField(blank=True)
-	profile_pic = models.ImageField(upload_to='profile_pics', blank=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    portfolio_site = models.URLField(blank=True)
+    profile_pic = models.ImageField(upload_to='profile_pics', blank=True)
+    linkedin = models.URLField(blank=True)
+    researchid = models.CharField(max_length=200, blank=True)
+    scopusid = models.CharField(max_length=200, blank=True)
 
-
-	def __str__(self):
-		return self.user.username
+    def __str__(self):
+        return self.user.username
 
 	# def get_absolute_url(self):
 	# 	return reverse('profile', args=[str(self.id)])
+
+# class UserModel(UserCreationForm):
+#   email = models.EmailField(('email'), unique=True)
+
+def create_profile(sender, **kwargs):
+    if kwargs['created']:
+        user_profile = UserProfileInfo.objects.create(user=kwargs['instance'])
+
+# post_save.connect(create_profile, sender=User)
 
 class Subject(models.Model):
     """Model representing the subject of the article."""

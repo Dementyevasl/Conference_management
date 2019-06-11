@@ -2,12 +2,18 @@
 
 {% block content %}
 
-      {% if user.is_authenticated %}
         <div class="col-md-12"><strong>Username:</strong> {{ user.username }}</div>
+        <div class="col-md-12"><strong>First_name:</strong> {{ user.first_name }}</div>
+        <div class="col-md-12"><strong>Last_name:</strong> {{ user.last_name }}</div>
         <div class="col-md-12"><strong>Email:</strong> {{ user.email }}</div>
+
+        {% if user.is_authenticated %}
         <div class="col-md-12"><strong>Last login:</strong> {{ user.last_login }}</div>
         <div class="col-md-12"><strong>Portfolio site:</strong> {{ user.userprofileinfo.portfolio_site }}</div>
         <div class="col-md-12"><strong>User ID:</strong> {{ user.userprofileinfo.user_id }}</div>
+        <div class="col-md-12"><strong>Linkedin:</strong> {{ user.userprofileinfo.linkedin }}</div>
+        <div class="col-md-12"><strong>ResearchID:</strong> {{ user.userprofileinfo.researchid }}</div>
+        <div class="col-md-12"><strong>ScopusID:</strong> {{ user.userprofileinfo.scopusid }}</div>
 
         <div class="col-md-12">
           <img style="max-width: 300px" src="../media/{{ user.userprofileinfo.profile_pic }}" />
