@@ -1,4 +1,4 @@
-{% extends "dappx/base.html" %}
+{% extends "conference/base.html" %}
 
 {% block content %}
 
@@ -123,7 +123,9 @@
 {#</ul>#}
 
 {% if not conference.isRegistered %}
-    <button type="button" class="btn btn-success">Submit</button>
+    <form action="#" method="get">
+    <input type="submit" class="btn btn-succes" value="Submit" name="SubmissionBtn">
+    </form>
 {% endif %}
 
 {% endblock %}

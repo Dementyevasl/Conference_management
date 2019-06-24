@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from dappx.models import Subject, Article, Author, UserProfileInfo, User
+from conference.models import UserConferenceInfo
 from django.views import generic
 
 
@@ -47,6 +48,8 @@ def register(request):
             user = user_form.save()
             user.set_password(user.password)
             user.save()
+            confInfo = UserConferenceInfo(user = user)
+            confInfo.save()
             profile = profile_form.save(commit=False)
             profile.user = user
             if 'profile_pic' in request.FILES:

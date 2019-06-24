@@ -1,0 +1,122 @@
+{% extends "conference/base.html" %}
+{% load render_table from django_tables2 %}
+{% load static %}
+
+{% block content %}
+  <h1>Conferences Page</h1>
+  <div class="modal-body row">
+    <div class="col-md-6">
+      <h2>Column 1</h2>
+      <div>
+        <h3>Notifications (TO DO)</h3>
+      </div>
+      <div>
+        <h3>Your Submissions:</h3>
+        <form action="#" method="get">
+          <input type="text" name="conf_id" list="conf_id_choices"/>
+          <datalist id="conf_id_choices">
+            {% for id in submission_conf_ids %}
+              <option value="{{id}}">
+            {% endfor %}
+          </datalist>
+          <input type="text" name="submission_status" list="status_choices">
+          <datalist id="status_choices">
+            {% for st_ch in status_choices %}
+              <option value="{{st_ch}}">
+            {% endfor %}
+          </datalist>
+          <input type="submit" class="btn btn-succes" value="Change Status" name="StatusChangerBtn">
+          <input type="submit" class="btn btn-succes" value="Delete Submission" name="DeleteSubmissionBtn">
+        </form>
+          
+        <ul class="list-group">
+          {% for submission in userConferenceInfo %}
+          <li class="list-group-item">{{ submission }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div>
+        <h3>Your upcoming Conferences</h3>
+        <ul class="list-group">
+            {% for title, date, type in upcoming_conferences %}
+            <li class="list-group-item">{{ title}} -- {{date}} -- {{type}}</li>
+            {% endfor %}
+          </ul>
+      </div>
+      <div>
+        <h3>Suggested Conferences</h3>
+        <form action="#" method="get">
+        <input type="submit" class="btn btn-succes" value="Update Suggestions" name="SuggestUpdaterBtn">
+        <input type="submit" class="btn btn-succes" value="Delete Suggestions" name="SuggestDeleterBtn">
+        </form>
+        {% if user_suggestions == None %}
+          <p>There are no suggestions for this user</p>
+        {% else %}
+          {% render_table suggestion_table %}  
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-md-6">
+      <h2>Column 2</h2>
+      <div>
+        <h3>Calendar</h3>
+        <div id='jqxCalendar'></div>
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    // Create calendar.
+                    $("#jqxCalendar").jqxCalendar({ enableTooltips: true, width: 200, height: 200 });
+                    // Create Date objects.                    
+                    {% if dates_info is not None %}
+                      var date = new Date('2019-06-06');
+                      $("#jqxCalendar").jqxCalendar('addSpecialDate', date, 'myDate', "Hello");
+                      {% for date_string, date_class, date_tooltip in dates_info %}
+                        
+                      $("#jqxCalendar").jqxCalendar('addSpecialDate', new Date("{{date_string}}"), "{{date_class}}", "{{date_tooltip}}");
+                      
+                      {% endfor %}
+                    {% endif %}
+                });
+            </script>
+        </div>
+      </div>
+      <div>
+        <h3>Google Map</h3>
+        <div id="map" style="height: 300px; width: 500px;"></div>
+        <script>
+            // Initialize and add the map
+            function initMap() {
+              // The location of Uluru
+              var center = {lat: 55.751244, lng: 37.618423};
+              var uluru = {lat: -25.344, lng: 131.036};
+              // The map, centered at Uluru
+              var map = new google.maps.Map(
+                  document.getElementById('map'), {zoom: 4, center: center});
+              // The markers, positioned on conferences
+              {% for icon_link, mark_position, conf_title in marks_info %}
+                var marker = new google.maps.Marker({
+                  position: {
+                              lat: {{ mark_position.latitude|stringformat:'f' }}, 
+                              lng: {{ mark_position.longitude|stringformat:'f' }}
+                            },
+                  map:map,
+                  icon:"{% static "images/" %}{{icon_link}}",
+                  title: "{{conf_title}}"
+            });
+              {% endfor %}
+            }
+            function addMarker(props){
+              var marker = new google.maps.Marker({
+              position: props.coords,
+              map:map,
+              icon:'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'
+            });
+
+       }
+        </script>
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCw7qVMiQK7UMFtcIi9Ac7G1H7WPGoRmJk&callback=initMap">
+        </script>
+      </div>
+    </div>
+  </div>
+  
+{% endblock %}

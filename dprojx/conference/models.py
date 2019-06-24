@@ -1,5 +1,7 @@
 from django.db import models
-
+from django.contrib.auth.models import User
+import datetime
+import json
 
 class Conference(models.Model):
     confTitle = models.CharField(max_length=100)
@@ -30,3 +32,40 @@ class Conference(models.Model):
         if not self.sponsors:
             return self.sponsors
         return self.sponsors.split(',')
+
+class UserConferenceInfo(models.Model):
+
+    user =  models.OneToOneField(User, on_delete= models.CASCADE)
+
+    submissions = models.ManyToManyField(Conference, through='Submission')
+
+    suggestions = models.CharField(max_length=200, null = True)
+
+    def set_suggestions(self, x):
+        self.suggestions = json.dumps(x)
+
+    def get_suggestions(self):
+        return json.loads(self.suggestions)
+
+    def __str__(self):
+	    return self.user.username
+
+class Submission(models.Model):
+    user = models.ForeignKey(UserConferenceInfo, on_delete= models.CASCADE)
+    conference = models.ForeignKey(Conference, on_delete= models.CASCADE)
+    data_creation = models.DateField(default=datetime.date.today)
+    data_last_update = models.DateField(default=datetime.date.today)
+    ACCEPTED = 'Accepted'
+    REJECTED = 'Rejected'
+    PENDING  = 'Pending'
+
+    status_choices = [
+        (ACCEPTED, 'Accepted'),
+        (REJECTED, 'Rejected'),
+        (PENDING, 'Pending')
+    ]
+    
+    status = models.CharField(max_length = 10, choices = status_choices, default= PENDING)
+
+    def __str__(self):
+        return f"Conference_ID: {self.conference.id}, Conference_Name: {self.conference.confTitle}, Status: {self.status}"

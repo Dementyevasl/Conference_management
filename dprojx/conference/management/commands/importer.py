@@ -34,8 +34,8 @@ class Command(BaseCommand):
         c.save()
 
     def handle(self, *args, **options):
-        paths = ['path/to/data_file.json',
-                 'path/to/data_file2.json']
+        paths = ['data_file.json',
+                 'data_file2.json']
         for path in paths:
             data = self.read_json(path)
             for conference in data:
