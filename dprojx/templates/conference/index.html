@@ -2,6 +2,8 @@
 
 {% block content %}
 
+{% if conferences %}
+
 <div class="panel panel-default">
   <!-- Default panel contents -->
   <div class="panel-heading">Conferences:</div>
@@ -16,6 +18,8 @@
   {% endfor %}
   </ul>
 </div>
+
+{% endif %}
 
 <nav aria-label="Page navigation">
 {% if conferences.has_other_pages %}
@@ -57,5 +61,22 @@
   </ul>
 {% endif %}
 </nav>
+
+{% if notifications %}
+
+    <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">Notifications:</div>
+
+      <!-- List group -->
+      <ul class="list-group">
+          {% for notification in notifications %}
+          <li class="list-group-item">{{ notification.date_created | date:'Y-m-d H:i' }}: {{ notification.text | safe }}
+          <a href="{% url 'conference:mark_read_notification' notification.id %}"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+          </li>
+          {% endfor %}
+      </ul>
+    </div>
+{% endif %}
 
 {% endblock %}

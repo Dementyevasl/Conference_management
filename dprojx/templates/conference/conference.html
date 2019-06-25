@@ -3,10 +3,18 @@
 {% block content %}
 
 <div class="page-header">
-  <h1>{{ conference.confTitle }} <small> {% if conference.confFamily %}
+  <h1>{{ conference.confTitle }}
+      <small>
+          {% if conference.confFamily %}
             {{ conference.confFamily }}
-        {% endif %}</small></h1>
+          {% endif %}
+      </small>
+  </h1>
 </div>
+
+{% if submission %}
+    <div class="alert alert-success" role="alert">Well done! You have successfully registered for the conference!</div>
+{% endif %}
 
 {#{% for name, value in conference.get_fields %}#}
 {#  {% if value %}#}
@@ -122,9 +130,9 @@
 {#    {% endfor %}#}
 {#</ul>#}
 
-{% if not conference.isRegistered %}
+{% if not submission %}
     <form action="#" method="get">
-    <input type="submit" class="btn btn-succes" value="Submit" name="SubmissionBtn">
+    <input type="submit" class="btn btn-success" value="Submit" name="SubmissionBtn">
     </form>
 {% endif %}
 

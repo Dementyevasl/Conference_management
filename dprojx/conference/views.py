@@ -1,17 +1,16 @@
 from django.core.paginator import Paginator
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django_tables2 import RequestConfig
 #from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
-from geopy.geocoders import GoogleV3, Nominatim
+from geopy.geocoders import Nominatim
 from .tables import ConferenceTable
 from .filters import ConferenceFilter
-#from notify.signals import notify
 import datetime
 from datetime import date
 import numpy as np
 import json
-from .models import Conference, Submission, UserConferenceInfo
+from .models import Conference, Submission, UserConferenceInfo, Notification
 
 
 def status2color(status):
@@ -24,6 +23,7 @@ def status2color(status):
     else:
         return "grey_circle_little_v2.png"
 
+
 def status2colorday(status):
     if status == 'Accepted':
         return "accepted_day"
@@ -31,6 +31,7 @@ def status2colorday(status):
         return "rejected_day"
     elif status == 'Pending':
         return "pending_day"
+
 
 def status2submissionday(status):
     if status == 'Accepted':
@@ -40,30 +41,37 @@ def status2submissionday(status):
     elif status == 'Pending':
         return "pending_day_deadline"
 
+
 def index(request):
     all_conferences = Conference.objects.all()
     return render(request, 'conference/index.html', {'conferences': all_conferences})
 
+
 def management_page(request):
     #TO DO: add all stuff needed on managment page
-    userConf = UserConferenceInfo.objects.get(pk = request.user.id)
+    userConf = UserConferenceInfo.objects.get(user=request.user)
     #current_time = datetime.datetime.now().strftime('%Y-%m-%d')
     #print(current_time)
-    if(request.GET.get('StatusChangerBtn')):
-        conf_id = int(request.GET.get('conf_id'))
-        conf_status = request.GET.get('submission_status')
-        conference_to_change =  Conference.objects.get(pk=conf_id)
-        Submission_to_change = Submission.objects.get(user = request.user.id, conference = conference_to_change)
-        Submission_to_change.status = conf_status
-        Submission_to_change.save()
+    # if(request.GET.get('StatusChangerBtn')):
+    #     conf_id = int(request.GET.get('conf_id'))
+    #     conf_status = request.GET.get('submission_status')
+    #     conference_to_change = Conference.objects.get(pk=conf_id)
+    #     Submission_to_change = Submission.objects.get(user=request.user.id, conference=conference_to_change)
+    #     Submission_to_change.status = conf_status
+    #     Submission_to_change.save()
+    #     text = 'The status of your submission on the "<b>{}</b>" conference ' \
+    #            'has changed to "<b>{}</b>".'.format(conference_to_change.confTitle, conf_status)
+    #     notification = Notification(user=request.user, text=text)
+    #     notification.save()
+    #
+    # if(request.GET.get('DeleteSubmissionBtn')):
+    #     conf_id = int(request.GET.get('conf_id'))
+    #     conference_adjusted = Conference.objects.get(pk=conf_id)
+    #     Submission_to_delete = Submission.objects.get(user=request.user.id, conference=conference_adjusted).delete()
+    #     conference_adjusted.isRegistered = False
+    #     conference_adjusted.save()
 
-    if(request.GET.get('DeleteSubmissionBtn')):
-        conf_id = int(request.GET.get('conf_id'))
-        conference_adjusted =  Conference.objects.get(pk=conf_id)
-        Submission_to_delete = Submission.objects.get(user = request.user.id, conference = conference_adjusted).delete()
-        conference_adjusted.isRegistered = False
-        conference_adjusted.save()
-
+    notifications = Notification.objects.filter(is_read=False).order_by('-date_created')
 
     user_submissions = Submission.objects.filter(user = request.user.id)
     status_choices = [x[1] for x in Submission.status_choices]
@@ -108,6 +116,7 @@ def management_page(request):
 
     icon_links = [status2color(x[2]) for x in user_submission_marks_info]
     marks_geoposition = [geolocator.geocode(x[0]) for x in user_submission_marks_info]
+    # marks_geoposition = []
     marks_title = [x[1] for x in user_submission_marks_info]
 
     user_submission_marks_info = list(zip(icon_links, marks_geoposition, marks_title))
@@ -151,26 +160,31 @@ def management_page(request):
 
     context = {
         'userConferenceInfo': user_submissions,
-        'status_choices':status_choices,
-        'submission_conf_ids':submission_conf_ids,
+        'status_choices': status_choices,
+        'submission_conf_ids': submission_conf_ids,
         'user_suggestions': user_suggestions,
         'suggestion_table': suggestion_table,
         'upcoming_conferences': upcoming_conferences,
         'marks_info': user_submission_marks_info,
-        'dates_info': conference_date_info
+        'dates_info': conference_date_info,
+        'notifications': notifications
     }
 
-    return render(request, 'conference/management_page.html', context= context)
+    return render(request, 'conference/management_page.html', context=context)
+
 
 def detail(request, conference_id):
     conference = Conference.objects.get(pk=conference_id)
-    if(request.GET.get('SubmissionBtn')):
-        userConf = UserConferenceInfo.objects.get(pk = request.user.id)
-        submission = Submission(user = userConf, conference = conference)
+    userConf = UserConferenceInfo.objects.get(user=request.user)
+    if request.GET.get('SubmissionBtn'):
+        userConf = UserConferenceInfo.objects.get(pk=request.user.id)
+        submission = Submission(user=userConf, conference=conference)
         conference.isRegistered = True
         conference.save()
         submission.save()
-    return render(request, 'conference/conference.html', {'conference': conference})
+    else:
+        submission = Submission.objects.filter(user=userConf, conference=conference).first()
+    return render(request, 'conference/conference.html', {'conference': conference, 'submission':submission})
 
 
 def listing(request):
@@ -180,6 +194,37 @@ def listing(request):
     page = request.GET.get('page')
     conferences = paginator.get_page(page)
     return render(request, 'conference/index.html', {'conferences': conferences})
+
+
+def delete_submission(request, submission_id):
+    submission = Submission.objects.get(id=submission_id)
+    submission.delete()
+    return redirect('conference:management_page')
+
+
+def change_submission_status(request, conference_id, status):
+    conference = Conference.objects.get(pk=conference_id)
+    userConf = UserConferenceInfo.objects.get(user=request.user)
+    submission = Submission.objects.get(user=userConf, conference=conference)
+    submission.status = status
+    submission.save()
+    text = 'The status of your submission on the "<b>{}</b>" conference ' \
+           'has changed to "<b>{}</b>".'.format(conference.confTitle, status)
+    notification = Notification(user=request.user, text=text)
+    notification.save()
+    return redirect('conference:management_page')
+
+
+def list_notifications(request):
+    notifications = Notification.objects.filter(is_read=False)
+    return render(request, 'conference/index.html', {'notifications': notifications})
+
+
+def mark_read_notification(request, notification_id):
+    notification = Notification.objects.get(pk=notification_id)
+    notification.is_read = True
+    notification.save()
+    return redirect('conference:list_notifications')
 
 # class FilteredConferenceListView(SingleTableMixin, #):
 #     table_class = ConferenceTable

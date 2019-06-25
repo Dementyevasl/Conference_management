@@ -1,13 +1,17 @@
 from django.db import models
+from django.utils import timezone
 from django.contrib.auth.models import User
 import datetime
 import json
+
 
 class Conference(models.Model):
     confTitle = models.CharField(max_length=100)
     confFamily = models.CharField(max_length=100, blank=True, null=True)
     location_country = models.CharField(max_length=100, blank=True, null=True)
     location_city = models.CharField(max_length=100, blank=True, null=True)
+    coords_lat = models.FloatField(blank=True, null=True)
+    coords_lng = models.FloatField(blank=True, null=True)
     dates_start = models.DateField(blank=True, null=True)
     dates_end = models.DateField(blank=True, null=True)
     website = models.URLField(blank=True, null=True)
@@ -33,13 +37,13 @@ class Conference(models.Model):
             return self.sponsors
         return self.sponsors.split(',')
 
-class UserConferenceInfo(models.Model):
 
-    user =  models.OneToOneField(User, on_delete= models.CASCADE)
+class UserConferenceInfo(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     submissions = models.ManyToManyField(Conference, through='Submission')
 
-    suggestions = models.CharField(max_length=200, null = True)
+    suggestions = models.CharField(max_length=200, null=True)
 
     def set_suggestions(self, x):
         self.suggestions = json.dumps(x)
@@ -48,24 +52,32 @@ class UserConferenceInfo(models.Model):
         return json.loads(self.suggestions)
 
     def __str__(self):
-	    return self.user.username
+        return self.user.username
+
 
 class Submission(models.Model):
-    user = models.ForeignKey(UserConferenceInfo, on_delete= models.CASCADE)
-    conference = models.ForeignKey(Conference, on_delete= models.CASCADE)
+    user = models.ForeignKey(UserConferenceInfo, on_delete=models.CASCADE)
+    conference = models.ForeignKey(Conference, on_delete=models.CASCADE)
     data_creation = models.DateField(default=datetime.date.today)
     data_last_update = models.DateField(default=datetime.date.today)
     ACCEPTED = 'Accepted'
     REJECTED = 'Rejected'
-    PENDING  = 'Pending'
+    PENDING = 'Pending'
 
     status_choices = [
         (ACCEPTED, 'Accepted'),
         (REJECTED, 'Rejected'),
         (PENDING, 'Pending')
     ]
-    
-    status = models.CharField(max_length = 10, choices = status_choices, default= PENDING)
+
+    status = models.CharField(max_length=10, choices=status_choices, default=PENDING)
 
     def __str__(self):
         return f"Conference_ID: {self.conference.id}, Conference_Name: {self.conference.confTitle}, Status: {self.status}"
+
+
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.TextField()
+    is_read = models.BooleanField(default=False)
+    date_created = models.DateTimeField(default=timezone.now)
