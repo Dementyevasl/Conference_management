@@ -17,15 +17,17 @@ class Conference(models.Model):
     website = models.URLField(blank=True, null=True)
     contacts_email = models.EmailField(blank=True, null=True)
     contacts_phoneNumber = models.CharField(max_length=15, blank=True, null=True)
-    acceptance_rate = models.FloatField(blank=True, null=True)
-    impact_factor = models.FloatField(blank=True, null=True)
+    # acceptance_rate = models.FloatField(blank=True, null=True)
     sponsors = models.TextField(blank=True, null=True)
     paperDeadline = models.DateField(blank=True, null=True)
+    additionalDeadlines_submission = models.DateField(blank=True, null=True)
+    additionalDeadlines_notification = models.DateField(blank=True, null=True)
+    additionalDeadlines_conference = models.DateField(blank=True, null=True)
     pageNumber_min = models.IntegerField(blank=True, null=True)
     pageNumber_max = models.IntegerField(blank=True, null=True)
     pageNumber_ave = models.FloatField(blank=True, null=True)
     field = models.TextField(blank=True, null=True)
-    isRegistered = models.BooleanField(default=False)
+    gen_field = models.TextField(blank=True, null=True)
 
     def get_fields(self):
         if not self.field:
@@ -55,9 +57,19 @@ class UserConferenceInfo(models.Model):
         return self.user.username
 
 
+class Article(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=100)
+    abstract = models.TextField()
+    keywords = models.TextField()
+    paper = models.TextField()
+    subject_areas = models.TextField()
+
+
 class Submission(models.Model):
     user = models.ForeignKey(UserConferenceInfo, on_delete=models.CASCADE)
     conference = models.ForeignKey(Conference, on_delete=models.CASCADE)
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
     data_creation = models.DateField(default=datetime.date.today)
     data_last_update = models.DateField(default=datetime.date.today)
     ACCEPTED = 'Accepted'

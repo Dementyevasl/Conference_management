@@ -131,9 +131,10 @@
 {#</ul>#}
 
 {% if not submission %}
-    <form action="#" method="get">
-    <input type="submit" class="btn btn-success" value="Submit" name="SubmissionBtn">
-    </form>
+{#    <form action="#" method="get">#}
+{#    <input type="submit" class="btn btn-success" value="Submit" name="SubmissionBtn">#}
+{#    </form>#}
+    <a href="{% url 'conference:submission_new' conference.id %}" class="btn btn-info" role="button">Submit</a>
 {% endif %}
 
 {% endblock %}

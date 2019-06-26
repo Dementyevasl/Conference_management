@@ -49,6 +49,7 @@
         <thead>
           <tr>
             <th>Conference Name</th>
+            <th>Article</th>
             <th>Status</th>
             <th></th>
           </tr>
@@ -57,6 +58,7 @@
           {% for submission in userConferenceInfo %}
           <tr>
             <td><a href="{% url 'conference:detail' submission.conference.id %}">{{ submission.conference.confTitle }}</a></td>
+            <td>{{ submission.article.title }}</td>
             <td>{{ submission.status }}
             <div class="dropdown">
               <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu{{ submission.conference.id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -139,7 +141,7 @@
               {% for icon_link, mark_position, conf_title in marks_info %}
                 var marker = new google.maps.Marker({
                   position: {
-                              lat: {{ mark_position.latitude|stringformat:'f' }}, 
+                              lat: {{ mark_position.latitude|stringformat:'f' }},
                               lng: {{ mark_position.longitude|stringformat:'f' }}
                             },
                   map:map,

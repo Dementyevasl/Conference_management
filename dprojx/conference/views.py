@@ -1,15 +1,12 @@
 from django.core.paginator import Paginator
 from django.shortcuts import redirect, render
 from django_tables2 import RequestConfig
-#from django_filters.views import FilterView
-from django_tables2.views import SingleTableMixin
 from geopy.geocoders import Nominatim
 from .tables import ConferenceTable
-from .filters import ConferenceFilter
 import datetime
 from datetime import date
 import numpy as np
-import json
+from .forms import SubmissionForm
 from .models import Conference, Submission, UserConferenceInfo, Notification
 
 
@@ -68,7 +65,6 @@ def management_page(request):
     #     conf_id = int(request.GET.get('conf_id'))
     #     conference_adjusted = Conference.objects.get(pk=conf_id)
     #     Submission_to_delete = Submission.objects.get(user=request.user.id, conference=conference_adjusted).delete()
-    #     conference_adjusted.isRegistered = False
     #     conference_adjusted.save()
 
     notifications = Notification.objects.filter(is_read=False).order_by('-date_created')
@@ -179,21 +175,23 @@ def detail(request, conference_id):
     if request.GET.get('SubmissionBtn'):
         userConf = UserConferenceInfo.objects.get(pk=request.user.id)
         submission = Submission(user=userConf, conference=conference)
-        conference.isRegistered = True
         conference.save()
         submission.save()
     else:
         submission = Submission.objects.filter(user=userConf, conference=conference).first()
-    return render(request, 'conference/conference.html', {'conference': conference, 'submission':submission})
+    return render(request, 'conference/conference.html', {'conference': conference, 'submission': submission})
 
 
 def listing(request):
-    conference_list = Conference.objects.all()
-    paginator = Paginator(conference_list, 25) # Show 25 contacts per page
+    # conference_list = Conference.objects.all()
+    # paginator = Paginator(conference_list, 25) # Show 25 contacts per page
+    #
+    # page = request.GET.get('page')
+    # conferences = paginator.get_page(page)
 
-    page = request.GET.get('page')
-    conferences = paginator.get_page(page)
-    return render(request, 'conference/index.html', {'conferences': conferences})
+    conference_table = ConferenceTable(Conference.objects.all())
+    RequestConfig(request, paginate={'per_page': 25}).configure(conference_table)
+    return render(request, 'conference/index.html', {'conference_table': conference_table})
 
 
 def delete_submission(request, submission_id):
@@ -226,6 +224,30 @@ def mark_read_notification(request, notification_id):
     notification.save()
     return redirect('conference:list_notifications')
 
+
+def submission_new(request, conference_id):
+    if request.method == "POST":
+        form = SubmissionForm(request.POST)
+        if form.is_valid():
+            article = form.save(commit=False)
+            fields = request.POST.getlist('gen_fields')
+            fields = [field.replace('_', ' ') for field in fields]
+            article.subject_areas = ','.join(fields)
+            print(article.subject_areas)
+            article.author = request.user
+            article.save()
+            userConf = UserConferenceInfo.objects.get(user=request.user)
+            conference = Conference.objects.get(pk=conference_id)
+            submission = Submission(user=userConf, conference=conference, article=article)
+            submission.save()
+            return redirect('conference:detail', conference_id=conference_id)
+    else:
+        conference = Conference.objects.get(pk=conference_id)
+        fields = conference.get_fields()
+        underscored_fields = [field.replace(' ', '_') for field in fields]
+        form = SubmissionForm()
+    return render(request, 'conference/submission_edit.html', {'form': form, 'confTitle': conference.confTitle,
+                                                               'fields': zip(fields, underscored_fields)})
 # class FilteredConferenceListView(SingleTableMixin, #):
 #     table_class = ConferenceTable
 #     model = Conference
