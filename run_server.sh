@@ -2,4 +2,4 @@
 
 python manage.py migrate
 python manage.py importer
-python  runserver 0.0.0.0:$PORT
+python manage.py runserver 0.0.0.0:$PORT

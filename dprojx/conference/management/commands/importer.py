@@ -2,6 +2,7 @@ import json
 
 from django.core.management.base import BaseCommand
 from conference.models import Conference
+from tqdm import tqdm
 
 
 class Command(BaseCommand):
@@ -13,7 +14,7 @@ class Command(BaseCommand):
 
     def import_conference(self, data):
         kwargs = {}
-        for key, val in data.items():
+        for key, val in data[1].items():
             if key in ['conferenceID', 'acceptance rate']:
                 continue
             key = '_'.join(key.split(' '))
@@ -40,5 +41,5 @@ class Command(BaseCommand):
         ]
         for path in paths:
             data = self.read_json(path)
-            for conference in data.items():
+            for i, conference in data.items():
                 self.import_conference(conference)
