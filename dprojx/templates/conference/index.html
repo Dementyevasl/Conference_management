@@ -1,0 +1,86 @@
+{% extends "dappx/base.html" %}
+
+{% load render_table from django_tables2 %}
+
+{% block content %}
+
+{% if not notifications %}
+
+{#<div class="panel panel-default">#}
+{#  <!-- Default panel contents -->#}
+{#  <div class="panel-heading">Conferences:</div>#}
+{#  <div class="panel-body">#}
+{#    <p>...</p>#}
+{#  </div>#}
+{##}
+{#  <!-- List group -->#}
+{#  <ul class="list-group">#}
+{#  {% for conference in conferences %}#}
+{#    <li class="list-group-item"><a href="{% url 'conference:detail' conference.id %}">{{ conference.confTitle }}</a></li>#}
+{#  {% endfor %}#}
+{#  </ul>#}
+{#</div>#}
+
+{% render_table conference_table %}
+
+{% endif %}
+
+{#<nav aria-label="Page navigation">#}
+{#{% if conferences.has_other_pages %}#}
+{#  <ul class="pagination">#}
+{#    {% if conferences.has_previous %}#}
+{#      <li><a href="?page={{ conferences.previous_page_number }}">&laquo;</a></li>#}
+{#    {% else %}#}
+{#      <li class="disabled"><span>&laquo;</span></li>#}
+{#    {% endif %}#}
+{##}
+{#    {% if conferences.has_previous %}#}
+{#      <li><a href="?page=1">1</a></li>#}
+{#    {% endif %}#}
+{##}
+{#    {% if conferences.number|add:'-4' > 1 %}#}
+{#      <li><a href="?page={{ conferences.number|add:'-5' }}">&hellip;</a></li>#}
+{#    {% endif %}#}
+{##}
+{#    {% for i in conferences.paginator.page_range %}#}
+{#        {% if conferences.number == i %}#}
+{#            <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>#}
+{#        {% elif i > conferences.number|add:'-5' and i < conferences.number|add:'5' %}#}
+{#            <li><a href="?page={{ i }}">{{ i }}</a></li>#}
+{#        {% endif %}#}
+{#    {% endfor %}#}
+{##}
+{#    {% if conferences.paginator.num_pages > conferences.number|add:'4' %}#}
+{#        <li><a href="?page={{ conferences.number|add:'5' }}">&hellip;</a></li>#}
+{#    {% endif %}#}
+{##}
+{#    {% if conferences.has_next %}#}
+{#      <li><a href="?page={{ conferences.next_page_number }}">&raquo;</a></li>#}
+{#    {% else %}#}
+{#      <li class="disabled"><span>&raquo;</span></li>#}
+{#    {% endif %}#}
+{#  {% if conferences.has_next %}#}
+{#    <li><a href="?page={{ conferences.paginator.num_pages }}">{{ conferences.paginator.num_pages }}</a></li>#}
+{#  {% endif %}#}
+{#  </ul>#}
+{#{% endif %}#}
+{#</nav>#}
+
+{% if notifications %}
+
+    <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">Notifications:</div>
+
+      <!-- List group -->
+      <ul class="list-group">
+          {% for notification in notifications %}
+          <li class="list-group-item">{{ notification.date_created | date:'Y-m-d H:i' }}: {{ notification.text | safe }}
+          <a href="{% url 'conference:mark_read_notification' notification.id %}"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+          </li>
+          {% endfor %}
+      </ul>
+    </div>
+{% endif %}
+
+{% endblock %}

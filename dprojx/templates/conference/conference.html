@@ -1,0 +1,140 @@
+{% extends "conference/base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+  <h1>{{ conference.confTitle }}
+      <small>
+          {% if conference.confFamily %}
+            {{ conference.confFamily }}
+          {% endif %}
+      </small>
+  </h1>
+</div>
+
+{% if submission %}
+    <div class="alert alert-success" role="alert">Well done! You have successfully registered for the conference!</div>
+{% endif %}
+
+{#{% for name, value in conference.get_fields %}#}
+{#  {% if value %}#}
+{#    {{ name }} => {{ value }}#}
+{#  {% endif %}#}
+{#{% endfor %}#}
+
+<div class="well">
+    <p>
+        <span class="glyphicon glyphicon-globe" aria-hidden="true"></span>
+        {{ conference.location_city }}, {{ conference.location_country }}
+    </p>
+    <p>
+        <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+        {% if conference.dates_start %}
+            {{ conference.dates_start }}
+        {% endif %}
+        {% if conference.dates_end %}
+            /{{ conference.dates_end }}
+        {% endif %}
+    </p>
+</div>
+
+<hr>
+<h3>Contacts</h3>
+{% if conference.website %}
+    <p><a href="{{ conference.website }}">{{ conference.website }}</a></p>
+{% endif %}
+{% if conference.contacts_email %}
+    <p>{{ conference.contacts_email }}</p>
+{% endif %}
+{% if conference.contacts_phoneNumber %}
+    <p>{{ conference.contacts_phoneNumber }}</p>
+{% endif %}
+{#<p><a href="{{ conference.website }}">{{ conference.website }}</a></p>#}
+{#<p>{{ conference.contacts_email }}</p>#}
+{#<p>{{ conference.contacts_phoneNumber }}</p>#}
+{#<div class="panel panel-default">#}
+{#  <div class="panel-heading">Contacts</div>#}
+{#  <div class="panel-body">#}
+{#      <p><a href="{{ conference.website }}">{{ conference.website }}</a></p>#}
+{#      <p>{{ conference.contacts_email }}</p>#}
+{#      <p>{{ conference.contacts_phoneNumber }}</p>#}
+{#  </div>#}
+{#</div>#}
+
+<hr>
+<h3>Conference details</h3>
+{% if conference.acceptance_rate %}
+    <p>Acceptance rate: {{ conference.acceptance_rate }}</p>
+{% endif %}
+{% if conference.impact_factor %}
+    <p>Impact factor: {{ conference.impact_factor }}</p>
+{% endif %}
+{% if conference.paperDeadline %}
+    <p>Submission deadline: {{ conference.paperDeadline }}</p>
+{% endif %}
+
+{% if conference.pageNumber_min %}
+    <p>Minimum number of pages: {{ conference.pageNumber_min }}</p>
+{% endif %}
+{% if conference.pageNumber_max %}
+    <p>Maximum number of pages: {{ conference.pageNumber_max }}</p>
+{% endif %}
+{% if conference.pageNumber_ave %}
+    <p>Average number of pages: {{ conference.pageNumber_ave }}</p>
+{% endif %}
+{#<p>Acceptance rate: {{ conference.acceptance_rate }}</p>#}
+{#<p>Impact factor: {{ conference.impact_factor }}</p>#}
+{#<p>Submission deadline: {{ conference.paperDeadline }}</p>#}
+{#<p>Minimum number of pages: {{ conference.pageNumber_min }}</p>#}
+{#<p>Maximum number of pages: {{ conference.pageNumber_max }}</p>#}
+{#<p>Average number of pages: {{ conference.pageNumber_ave }}</p>#}
+
+{% if conference.get_sponsors %}
+    <ul class="list-inline">
+      <li>Sponsors:</li>
+      {% for field in conference.get_sponsors %}
+          <li>{{ field }}</li>
+      {% endfor %}
+    </ul>
+{% endif %}
+{#<ul class="list-inline">#}
+{#  <li>Sponsors:</li>#}
+{#  {% for field in conference.get_sponsors %}#}
+{#      <li>{{ field }}</li>#}
+{#    {% endfor %}#}
+{#</ul>#}
+{#<div class="panel panel-default">#}
+{#  <div class="panel-heading">Conference details</div>#}
+{#  <div class="panel-body">#}
+{#      <p>Acceptance rate: {{ conference.acceptance_rate }}</p>#}
+{#      <p>Impact factor: {{ conference.impact_factor }}</p>#}
+{#      <p>Impact factor: {{ conference.pageNumber_min }}</p>#}
+{#      <p>Impact factor: {{ conference.pageNumber_max }}</p>#}
+{#      <p>Impact factor: {{ conference.pageNumber_ave }}</p>#}
+{#  </div>#}
+{#</div>#}
+
+{#<h3><span class="glyphicon glyphicon-list" aria-hidden="true"></span> Fields:</h3>#}
+{% if conference.get_fields %}
+    <span class="glyphicon glyphicon-list" aria-hidden="true"></span> Fields:
+    <ul>
+        {% for field in conference.get_fields %}
+          <li>{{ field }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{#<span class="glyphicon glyphicon-list" aria-hidden="true"></span> Fields:#}
+{#<ul>#}
+{#    {% for field in conference.get_fields %}#}
+{#      <li>{{ field }}</li>#}
+{#    {% endfor %}#}
+{#</ul>#}
+
+{% if not submission %}
+{#    <form action="#" method="get">#}
+{#    <input type="submit" class="btn btn-success" value="Submit" name="SubmissionBtn">#}
+{#    </form>#}
+    <a href="{% url 'conference:submission_new' conference.id %}" class="btn btn-info" role="button">Submit</a>
+{% endif %}
+
+{% endblock %}

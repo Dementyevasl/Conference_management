@@ -9,6 +9,12 @@ verify_ssl = true
 django = "*"
 pillow = "*"
 django-debugtools = "*"
+django-tables2 = "*"
+geopy = "*"
+django-filters = "*"
+django-filter = "*"
+numpy = "*"
+tqdm = "*"
 
 [requires]
 python_version = "3.7"

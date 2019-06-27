@@ -1,4 +1,5 @@
 # dappx/views.py
+from django.shortcuts import render
 from dappx.forms import UserForm, UserProfileInfoForm
 from dappx.models import Subject, Article, Author, UserProfileInfo, User
 
@@ -9,10 +10,12 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from dappx.models import Subject, Article, Author, UserProfileInfo, User
+from conference.models import UserConferenceInfo
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views import generic
-
 
 
 def index(request):
@@ -53,10 +56,12 @@ def register(request):
             user = user_form.save()
             user.set_password(user.password)
             user.save()
+            confInfo = UserConferenceInfo(user = user)
+            confInfo.save()
             profile = profile_form.save(commit=False)
             profile.user = user
             if 'profile_pic' in request.FILES:
-                # print('found it')
+                print('found it')
                 profile.profile_pic = request.FILES['profile_pic']
             profile.save()
             registered = True
@@ -67,8 +72,8 @@ def register(request):
         profile_form = UserProfileInfoForm()
     return render(request, 'dappx/registration.html',
                   {'user_form': user_form,
-                   'profile_form': profile_form,
-                   'registered': registered})
+                           'profile_form': profile_form,
+                           'registered': registered})
 
 def user_login(request):
     if request.method == 'POST':

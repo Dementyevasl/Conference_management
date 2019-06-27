@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Base</title>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    {% load static %}
+  <link rel="stylesheet" href="{% static "scripts/jqx.base.css" %}" type="text/css" />
+  <link rel="stylesheet" href="{% static "scripts/jqx.energyblue.css" %}" type="text/css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="{% static "scripts/globalize.js" %}"></script>
+  <script type="text/javascript" src="{% static "scripts/jqx-all.js" %}"></script>
+  <style>
+    .rejected_day{
+      color:white;
+      background:red !important;
+    }
+    .rejected_day_deadline{
+      color:rgb(32, 32, 32);
+      background:rgb(255, 0, 0) !important;
+    }
+    .accepted_day{
+      color:white;
+      background:green !important;
+    }
+    .accepted_day_deadline{
+      color:rgb(0, 0, 0);
+      background:green !important;
+    }
+    .pending_day{
+      color:white;
+      background:orange !important;
+    }
+    .pending_day_deadline{
+      color:rgb(0, 0, 0);
+      background:orange !important;
+    }
+
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-default navbar-static-top">
+    <div class="container">
+      <ul class="nav navbar-nav">
+        {# Django Home Link / Admin Link / Register Link#}
+        <li><a class="navbar-brand" href="{% url 'index' %}">Conference Management</a></li>
+        <li><a class="navbar-link" href="{% url 'admin:index' %}">Admin</a></li>
+
+        {% if user.is_authenticated %}
+          <li><a href="{% url 'profile' user.id %}">Profile</a></li>
+          <li><a href="{% url 'conference:management_page' %}">Your Management</a></li>
+          <li><a href="{% url 'conference:index' %}">Conferences</a></li>
+          <li><a href="{% url 'logout' %}">Logout</a></li>
+        {% else %}
+          <li><a class="navbar-link" href="{% url 'dappx:register' %}">Sign Up</a></li>
+          <li><a class="navbar-link" href="{% url 'dappx:user_login' %}">Sign In</a></li>
+        {% endif %}
+
+      </ul>
+    </div>
+  </nav>
+  <div class="container">
+    {% block body_block %}
+    {% endblock %}
+  </div>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-2">
+      {% block sidebar %}
+        <ul class="sidebar-nav">
+          <li><a href="{% url 'index' %}">Home</a></li>
+          <li><a href="{% url 'about' %}">About</a></li>
+          <li><a href="{% url 'articles' %}">All articles</a></li>
+          <li><a href="{% url 'authors' %}">All authors</a></li>
+        </ul>
+     {% endblock %}
+      </div>
+      <div class="col-sm-10 ">{% block content %}{% endblock %}</div>
+    </div>
+  </div>
+</body>
+
+</html>
