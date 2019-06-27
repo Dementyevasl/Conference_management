@@ -1,13 +1,22 @@
 # dappx/views.py
 from django.shortcuts import render
 from dappx.forms import UserForm, UserProfileInfoForm
+from dappx.models import Subject, Article, Author, UserProfileInfo, User
+
+from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from dappx.models import Subject, Article, Author, UserProfileInfo, User
 from conference.models import UserConferenceInfo
+from django.urls import reverse_lazy
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views import generic
+
 
 
 def index(request):
@@ -53,7 +62,7 @@ def register(request):
             profile = profile_form.save(commit=False)
             profile.user = user
             if 'profile_pic' in request.FILES:
-                print('found it')
+                # print('found it')
                 profile.profile_pic = request.FILES['profile_pic']
             profile.save()
             registered = True
@@ -64,8 +73,8 @@ def register(request):
         profile_form = UserProfileInfoForm()
     return render(request, 'dappx/registration.html',
                   {'user_form': user_form,
-                           'profile_form': profile_form,
-                           'registered': registered})
+                   'profile_form': profile_form,
+                   'registered': registered})
 
 def user_login(request):
     if request.method == 'POST':
@@ -101,5 +110,29 @@ class AuthorDetailView(generic.DetailView):
 class UserDetailView(generic.DetailView):
     model = User
 
+class UserUpdate(UpdateView):
+    model = User
+    fields = ['first_name', 'last_name']
+
+class UserDelete(DeleteView):
+    model = User
+    success_url = reverse_lazy('index')
+
 def about(request):
     return render(request, 'dappx/about.html')
+
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(data=request.POST, user=request.user)
+
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+            return redirect(reverse('index'))
+        else:
+            return redirect(reverse('profile/change_password/'))
+    else:
+        form = PasswordChangeForm(user=request.user)
+
+        args = {'form': form}
+        return render(request, 'dappx/change_password.html', args)
