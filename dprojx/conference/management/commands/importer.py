@@ -40,5 +40,5 @@ class Command(BaseCommand):
         ]
         for path in paths:
             data = self.read_json(path)
-            for conference in data.items():
+            for i, conference in data.items():
                 self.import_conference(conference)

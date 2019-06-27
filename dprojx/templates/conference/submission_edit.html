@@ -1,0 +1,44 @@
+{% extends "conference/base.html" %}
+
+{% block content %}
+    <div class="page-header">
+      <h1>Submission page<br>
+          <small>{{ confTitle }}</small>
+      </h1>
+    </div>
+{#    <form method="POST" class="post-form">{% csrf_token %}#}
+{#        {{ form.as_p }}#}
+{#        <button type="submit" class="save btn btn-default">Submit</button>#}
+{#    </form>#}
+
+    {% for e in form.non_field_errors %}
+        <div class="alert alert-danger">{{ e }}</div>
+    {% endfor %}
+    <form class="form-horizontal" method="post">{% csrf_token %}
+    <fieldset>
+    {% for field in form %}
+        <div class="control-group {% if field.errors %}has-error{% endif %}">
+            <label class="control-label">{{ field.label }}</label>
+            {% if field.help_text %}
+            <span class="help-block">{{ field.help_text }}</span>
+            {% endif %}
+            <div class="controls">{{ field }}</div>
+        </div>
+        <hr class="separator">
+    {% endfor %}
+    <div class="control-group {% if field.errors %}has-error{% endif %}">
+    <label class="control-label">Subject areas</label>
+        <div class="controls">
+        {% for field, undescore_field in fields %}
+            <input type="checkbox" name="gen_fields" id="option{{ forloop.counter0 }}" value={{ undescore_field }} />
+            <label for="option{{ forloop.counter0 }}">{{ field }}</label><br />
+        {% endfor %}
+        </div>
+    </div>
+    <hr class="separator">
+    </fieldset>
+    <div class="form-actions">
+        <button type="submit" class="save btn btn-default">Submit</button>
+    </div>
+    </form>
+{% endblock %}
